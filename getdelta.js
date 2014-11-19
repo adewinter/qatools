@@ -13,6 +13,7 @@ var jobEnd = 0;
 var baseUrl = 'http://jenkins.mindtap.corp.web:8080/view/Deploy-Jobs/job/QAF%20-%20Deploy/';
 var apiStuff=  '/api/json?pretty=true&tree=actions[*[*]]';
 
+var USE_STANDARD_JSON = false;
 
 var rl = readline.createInterface({
   input: process.stdin,
@@ -20,6 +21,10 @@ var rl = readline.createInterface({
 });
 
 function start() {
+	if (process.argv.length === 3 && process.argv[2] === '-j') {
+		console.log('Outputting result as standard JSON.');
+		USE_STANDARD_JSON = true;
+	}
 	askBaseUrl();
 }
 
@@ -107,7 +112,11 @@ function analyze() {
 
 
 	console.log('DONE! ::\n\n');
-	console.log(prettyjson.render(output));
+	if (USE_STANDARD_JSON) {
+		console.log(JSON.stringify(output));
+	} else {
+		console.log(prettyjson.render(output));
+	}
 
 }
 
