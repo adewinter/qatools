@@ -5,21 +5,28 @@
   "description": "Grabs build params from jenkins for the specified number of builds and merges info.",
   "main": "getdelta.js",
   "preferGlobal": "true",
-  "bin": { "jenkinsinfo": "getdelta.js" },
+  "bin": {
+    "jenkinsinfo": "getdelta.js"
+  },
   "author": {
-    "name" : "Anton de Winter",
+    "name": "Anton de Winter",
     "url": "http://adewinter.github.io/"
   },
   "contributors": {
     "name": "Alex Vainstein"
   },
-  "repository" : { 
-    "type": "git", 
+  "repository": {
+    "type": "git",
     "url": "http://github.com/adewinter/qatools"
   },
   "license": "ISC",
   "dependencies": {
     "node.extend": "~1.1.3",
-    "prettyjson": "~1.0.0"
+    "prettyjson": "~1.0.0",
+    "shelljs": "~0.3.0",
+    "express": "~4.10.2"
+  },
+  "devDependencies": {
+    "express": "~4.10.2"
   }
 }
