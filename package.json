@@ -1,6 +1,6 @@
 {
   "name": "jenkins-info",
-  "version": "0.0.5",
+  "version": "0.1.0",
   "homepage": "https://github.com/adewinter/qatools",
   "description": "Grabs build params from jenkins for the specified number of builds and merges info.",
   "main": "getdelta.js",
@@ -24,7 +24,8 @@
     "node.extend": "~1.1.3",
     "prettyjson": "~1.0.0",
     "shelljs": "~0.3.0",
-    "express": "~4.10.2"
+    "express": "~4.10.2",
+    "minimist": "~1.1.0"
   },
   "devDependencies": {
     "express": "~4.10.2"

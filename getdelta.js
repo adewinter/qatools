@@ -5,6 +5,7 @@ var http = require('http');
 var readline = require('readline');
 var extend = require('node.extend');
 var prettyjson = require('prettyjson');
+var parseargs = require('minimist');
 
 
 var info = [];
@@ -15,7 +16,7 @@ var apiStuff=  '/api/json?pretty=true&tree=actions[*[*]]';
 
 var USE_STANDARD_JSON = false;
 var DEBUG_MODE = false;
-
+var IS_INTERACTIVE = true;
 var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -24,47 +25,92 @@ var rl = readline.createInterface({
 
 
 function start() {
-	if (process.argv.length === 3 && process.argv[2] === '-j') {
-		console.log('Outputting result as standard JSON.');
-		USE_STANDARD_JSON = true;
+	var argsOpts = {
+		'boolean': ['d', 'j'],
+		'default': {
+			'd': false,
+			'j': false,
+			'url': 'http://jenkins.mindtap.corp.web:8080/view/Deploy-Jobs/job/QAF%20-%20Deploy/',
+			'start': 100,
+			'end': 110,
+			'i': false,
+			'h': false,
+			'help': false,
+		}
+	};
+	var args = parseargs(process.argv.slice(2), argsOpts);
+	if (args.h || args.help) {
+		console.log('=================================================\n' +
+			'jenkinsinfo [-j|-d|--url <BASE_URL>|--start <JOB_NUM>|--end <JOB_NUM>|-h|--help]\n\n' +
+			'-j : Output JSON String instead of Prettified JSON (useful when using with other tools).\n' +
+			'-d : Debug Mode.\n' + 
+			'-i : Force interactive mode (instead of just using command line args and defaults.\n' + 
+			'--url <BASE_URL> : Specify the URL to get information from (e.g: \n' +
+				'\t jenkinsinfo --url "http://jenkins.mindtap.corp.web:8080/view/Deploy-Jobs/job/QAF%20-%20Deploy/"\n' +
+				'\t)\n\n' +
+			'--start <NUM> : Start job to begin analysis from.\n' + 
+			'--end <NUM> : End job for analysis.\n' + 
+			'-h : This screen.\n' +
+			'--help : This screen.\n');
+		rl.close();
+		return;
 	}
-	if (process.argv.length === 3 && process.argv[2] === '-d') {
-		console.log('NOW IN DEBUG MODE');
-		DEBUG_MODE = true;
+	baseUrl = args.url;
+	jobStart = parseInt(args.start,10);
+	jobEnd = parseInt(args.end,10);
+	USE_STANDARD_JSON = args.j;
+	DEBUG_MODE = args.d;
+	IS_INTERACTIVE = process.argv.slice(2).length === 0 || args.i;
+	if (DEBUG_MODE) {
+		console.log('Parsed Command Line Args (incl. defaults):', args);
+		console.log('============');
+		console.log('jobStart, jobEnd, baseUrl, USE_STANDARD_JSON, DEBUG_MODE, IS_INTERACTIVE::', 
+					jobStart, jobEnd, baseUrl, USE_STANDARD_JSON, DEBUG_MODE, IS_INTERACTIVE);
+		console.log('============');
 	}
 	askBaseUrl();
+
 }
 
 function askBaseUrl() {
-	rl.question('Enter base URL (e.g http://jenkins.mindtap.corp.web:8080/view/Deploy-Jobs/job/QAF%20-%20Deploy/ ) :', function(answer) {
-	  // TODO: Log the answer in a database
-	  console.log('Thank you.');
-	  if (!answer || answer === '') {
-	  	answer = 'http://jenkins.mindtap.corp.web:8080/view/Deploy-Jobs/job/QAF%20-%20Deploy/';
-	  }
-	  baseUrl = answer;
+	if (IS_INTERACTIVE) {
+		rl.question('Enter base URL (e.g http://jenkins.mindtap.corp.web:8080/view/Deploy-Jobs/job/QAF%20-%20Deploy/ ) :', function(answer) {
+		  // TODO: Log the answer in a database
+		  console.log('Thank you.');
+		  if (!answer || answer === '') {
+		  	answer = 'http://jenkins.mindtap.corp.web:8080/view/Deploy-Jobs/job/QAF%20-%20Deploy/';
+		  }
+		  baseUrl = answer;
 
-	  askJobRange();
-	});
+		  askJobRange();
+		});
+	} else {
+		askJobRange();
+	}
 }
 
 function askJobRange() {
-	rl.question('Enter start job to analyze (e.g. 183):', function(answer) {
-	  if (!answer || answer === '') {
-	  	answer = '180';
-	  }
-	  console.log('Will start analysis on job:', answer);
-	  jobStart = parseInt(answer,10);
-	  rl.question('Enter job to end on (e.g 185):', function(ans) {
-	  	if (!ans || ans === '') {
-	  		ans = '183';
-	  	}
-	  	console.log('Analysis will end on job ', ans, ' (inclusive)');
-	  	jobEnd = parseInt(ans,10);
-	  	rl.close();
-	  	startAnalysis();
-	  });
-	});
+	if (IS_INTERACTIVE) {
+		rl.question('Enter start job to analyze (e.g. 183):', function(answer) {
+		  if (!answer || answer === '') {
+		  	answer = '180';
+		  }
+		  console.log('Will start analysis on job:', answer);
+		  jobStart = parseInt(answer,10);
+		  rl.question('Enter job to end on (e.g 185):', function(ans) {
+		  	if (!ans || ans === '') {
+		  		ans = '183';
+		  	}
+		  	console.log('Analysis will end on job ', ans, ' (inclusive)');
+		  	jobEnd = parseInt(ans,10);
+		  	rl.close();
+		  	startAnalysis();
+		  });
+		});
+	} else {
+		rl.close();
+		startAnalysis();
+	}
 }
 
 function getData(jobNum, isFinal) {
