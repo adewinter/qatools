@@ -17,6 +17,9 @@ var apiStuff=  '/api/json?pretty=true&tree=actions[*[*]]';
 var USE_STANDARD_JSON = false;
 var DEBUG_MODE = false;
 var IS_INTERACTIVE = true;
+var NO_COLOR = false;
+
+
 var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
@@ -36,12 +39,13 @@ function start() {
 			'i': false,
 			'h': false,
 			'help': false,
+			'nocolor': false
 		}
 	};
 	var args = parseargs(process.argv.slice(2), argsOpts);
 	if (args.h || args.help) {
 		console.log('=================================================\n' +
-			'jenkinsinfo [-j|-d|--url <BASE_URL>|--start <JOB_NUM>|--end <JOB_NUM>|-h|--help]\n\n' +
+			'jenkinsinfo [-j|-d|--url <BASE_URL>|--start <JOB_NUM>|--end <JOB_NUM>|--nocolor|-h|--help]\n\n' +
 			'-j : Output JSON String instead of Prettified JSON (useful when using with other tools).\n' +
 			'-d : Debug Mode.\n' + 
 			'-i : Force interactive mode (instead of just using command line args and defaults.\n' + 
@@ -50,6 +54,7 @@ function start() {
 				'\t)\n\n' +
 			'--start <NUM> : Start job to begin analysis from.\n' + 
 			'--end <NUM> : End job for analysis.\n' + 
+			'--nocolor : DISABLES color output. \n' +
 			'-h : This screen.\n' +
 			'--help : This screen.\n');
 		rl.close();
@@ -61,6 +66,7 @@ function start() {
 	USE_STANDARD_JSON = args.j;
 	DEBUG_MODE = args.d;
 	IS_INTERACTIVE = process.argv.slice(2).length === 0 || args.i;
+	NO_COLOR = args.nocolor;
 	if (DEBUG_MODE) {
 		console.log('Parsed Command Line Args (incl. defaults):', args);
 		console.log('============');
@@ -183,9 +189,8 @@ function analyze() {
 	if (USE_STANDARD_JSON) {
 		console.log(JSON.stringify(output));
 	} else {
-		console.log(prettyjson.render(output));
+		console.log(prettyjson.render(output, {noColor: NO_COLOR}));
 	}
-
 }
 
 
