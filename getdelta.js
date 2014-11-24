@@ -14,16 +14,23 @@ var baseUrl = 'http://jenkins.mindtap.corp.web:8080/view/Deploy-Jobs/job/QAF%20-
 var apiStuff=  '/api/json?pretty=true&tree=actions[*[*]]';
 
 var USE_STANDARD_JSON = false;
+var DEBUG_MODE = false;
 
 var rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout
 });
 
+
+
 function start() {
 	if (process.argv.length === 3 && process.argv[2] === '-j') {
 		console.log('Outputting result as standard JSON.');
 		USE_STANDARD_JSON = true;
+	}
+	if (process.argv.length === 3 && process.argv[2] === '-d') {
+		console.log('NOW IN DEBUG MODE');
+		DEBUG_MODE = true;
 	}
 	askBaseUrl();
 }
@@ -63,6 +70,9 @@ function askJobRange() {
 function getData(jobNum, isFinal) {
 	var url = baseUrl + jobNum + apiStuff;
 	console.log('Getting for ', jobNum, isFinal ? ' Last Job.' : '');
+	if (DEBUG_MODE) {
+		console.log('Hitting URL:', url);
+	}
 	http.get(url, function(res){
 	    var data = '';
 
@@ -72,7 +82,16 @@ function getData(jobNum, isFinal) {
 
 	    res.on('end',function(){
 	        var obj = JSON.parse(data);
-	        var _data = obj.actions[0].parameters;
+	        var _data;
+	        var actions = obj.actions;
+	        for (var i = 0; i<actions.length; i++) {
+	        	if (actions[i] && actions[i].parameters) {
+	        		_data = actions[i].parameters;
+	        		if (DEBUG_MODE) {
+		        		console.log('FOUND PARAMS');
+		        	}
+	        	}
+	        }
 	        console.log('Done.');
 	        info.push(_data);
 
@@ -95,6 +114,9 @@ function startAnalysis() {
 function analyze() {
 	var output = {};
 	console.log('========================================\n\n\n\n');
+	if (DEBUG_MODE) {
+		console.log('FINAL DATASET:', JSON.stringify(info));
+	}
 	for (var i=0; i<info.length; i++ ){ 
 		var datum = {};
 		for (var k=0; k<info[i].length; k++){
