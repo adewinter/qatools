@@ -121,8 +121,9 @@ function askJobRange() {
 
 function getData(jobNum, isFinal) {
 	var url = baseUrl + jobNum + apiStuff;
-	console.log('Getting for ', jobNum, isFinal ? ' Last Job.' : '');
+	
 	if (DEBUG_MODE) {
+		console.log('Getting for ', jobNum, isFinal ? ' Last Job.' : '');
 		console.log('Hitting URL:', url);
 	}
 	http.get(url, function(res){
@@ -144,7 +145,9 @@ function getData(jobNum, isFinal) {
 		        	}
 	        	}
 	        }
-	        console.log('Done.');
+	        if (DEBUG_MODE) {
+		        console.log('Done.');
+		    }
 	        info.push(_data);
 
 	        if (isFinal) {
@@ -165,8 +168,9 @@ function startAnalysis() {
 
 function analyze() {
 	var output = {};
-	console.log('========================================\n\n\n\n');
+
 	if (DEBUG_MODE) {
+		console.log('========================================\n\n\n\n');
 		console.log('FINAL DATASET:', JSON.stringify(info));
 	}
 	for (var i=0; i<info.length; i++ ){ 
@@ -184,10 +188,13 @@ function analyze() {
 		output = extend(output, info[i]);
 	}
 
-
-	console.log('DONE! ::\n\n');
+	if (DEBUG_MODE) {
+		console.log('DONE! ::\n\n');
+	}
 	if (USE_STANDARD_JSON) {
 		console.log(JSON.stringify(output));
+		console.log('===================');
+		console.log(prettyjson.render(output, {noColor: NO_COLOR}));
 	} else {
 		console.log(prettyjson.render(output, {noColor: NO_COLOR}));
 	}
