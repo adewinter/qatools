@@ -1,6 +1,6 @@
 "use strict";
 /*jslint node: true */
-var host = "127.0.0.1";
+var host = "0.0.0.0";
 var port = 8000;
 var shell = require("shelljs");
 var express = require("express");
