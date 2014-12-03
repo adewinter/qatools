@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Jenkins Diff Builds History</title>
+
+    <style>
+        fieldset {
+            border: 2;
+        }
+        label {
+            display: block;
+            margin: 20px 0 0 0;
+        }
+        select {
+            width: 500px;
+        }
+        .overflow {
+            height: 200px;
+        }
+
+    </style>
+    <style>
+        /* Begin Navigation Bar Styling */
+        #nav {
+            width: 100%;
+            float: left;
+            margin: 0 0 3em 0;
+            padding: 0;
+            list-style: none;
+            background-color: #f2f2f2;
+            border-bottom: 1px solid #ccc;
+            border-top: 1px solid #ccc; }
+        #nav li {
+            float: left; }
+        #nav li a {
+            display: block;
+            padding: 8px 15px;
+            text-decoration: none;
+            font-weight: bold;
+            color: #069;
+            border-right: 1px solid #ccc; }
+        #nav li a:hover {
+            color: #c00;
+            background-color: #fff; }
+        /* End navigation bar styling. */
+
+        /* This is just styling for this specific page. */
+        body {
+            background-color: #555;
+            font: small/1.3 Arial, Helvetica, sans-serif; }
+        #wrap {
+            width: 750px;
+            margin: 0 auto;
+            background-color: #fff; }
+        h1 {
+            font-size: 1.5em;
+            padding: 1em 8px;
+            color: #333;
+            background-color: #ffffff;
+            margin: 0; }
+        #content {
+            padding: 0 50px 10px; }
+    </style>
+</head>
+
+<body>
+<div id="wrap">
+    <div class="logo">
+        <img alt="" src="Images/logo.png" />
+    </div>
+    <h1>Jenkins Diff Builds History</h1>
+
+    <ul id="nav">
+        <li><a href="jenkinsinfo.html">Home</a></li>
+        <li><a href="getbuilds.html">Get Build History</a></li>
+        <!--<li><a href="applybuild.html">Apply Latest</a></li>-->
+    </ul>
+
+    <div id="content">
+        <b>Description</b>
+        <br>
+        - Choose the environment<br>
+        - Enter the Start Build<br>
+        - Enter the Last Build<br>
+        - Run the script<br><br>
+        <b>The result will displayed</b></b> <br>
+            a) All latest parameters that have been deployed between selected build<br>
+            b) The script that can be used to grab latest parameters that can be deployed into another environment.
+
+
+
+    </div>
+    <form action="run" method="GET">
+        <fieldset>
+            <label for="url"><b>Select Jenkins base URL</b></label>
+            <select name="url" id="url">
+                <option name = "QAF" selected="selected">http://jenkins.mindtap.corp.web:8080/view/Deploy-Jobs/job/QAF%20-%20Deploy/</option>
+                <option name = "QAD">http://jenkins.mindtap.corp.web/view/Deploy-Jobs/job/QAD-Deploy/</option>
+                <option name = "QAE">http://jenkins.mindtap.corp.web/view/Deploy-Jobs/job/QAE%20-%20Deploy/</option>
+                <option name = "QA" >http://jenkins.mindtap.corp.web/view/Deploy-Jobs/job/QA%20-%20Deploy/</option>
+                <option name = "QAH">http://jenkins.mindtap.corp.web/view/Deploy-Jobs/job/QAH%20-%20Deploy/</option>
+                <option name = "QAP">http://jenkins.mindtap.corp.web/view/Deploy-Jobs/job/QAP%20-%20Deploy/</option>
+                <option name = "MTDev">http://jenkins.mindtap.corp.web/view/Deploy-Jobs/job/MT%20Dev%20-%20Deploy/</option>
+            </select>
+
+            <label for="startBuild"><b>Start Build #</b></label>
+            <input id="startBuild" type="text" name="startBuild"/>
+
+            <label for="endBuild"><b>End Build #</b></label>
+            <input id="endBuild" type="text" name="endBuild"/>
+
+            <input type="submit" name="submitButton" value="Run Script"/>
+
+        </fieldset>
+
+    </form>
+</div>
+
+</body>
+</html>
