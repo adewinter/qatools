@@ -13,10 +13,15 @@ app.get("/run", function(request, response){ //root dir
 	var start = request.query.startBuild;
 	var end = request.query.endBuild;
 	var url = request.query.url;
-	var commandString = "jenkinsinfo -j --start "+start+" --end "+end+" --url "+url+" --nocolor";
+	var commandString = "jenkinsinfo -j --start "+start+" --end "+end+" --url \""+url+"\" --nocolor";
+	console.log('RUNNING: ', commandString);
 	var result = shell.exec(commandString);
 	response.set("Content-Type", "text/html");
     response.send("<pre>"+result.output+"</pre> ");
+});
+
+app.get("/", function (req, res) {
+	res.redirect("/getbuilds.html");
 });
 
 app.listen(port, host);
